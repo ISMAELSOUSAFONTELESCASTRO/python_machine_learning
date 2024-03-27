@@ -110,7 +110,7 @@ class Algoritimo_genetico:
         return populacao_mutada
 
     def finalizar(self):
-        with open("/home/ismael/Documentos/PYTHON LEARNING PROJECTS/PYTHON_MACHINE_LEARNING/knn/evolucaodtree.txt","w") as file:
+        with open("evolucaodtree.txt","w") as file:
 
             #geracao1
             geracao = 1
@@ -163,6 +163,6 @@ class Algoritimo_genetico:
 
 if __name__ == '__main__':
         
-    ag = Algoritimo_genetico(10, 10, 10, "/home/ismael/Documentos/PYTHON LEARNING PROJECTS/PYTHON_MACHINE_LEARNING/knn/diabetes.csv")
+    ag = Algoritimo_genetico(10, 10, 10, "diabetes.csv")
     ag.finalizar()
     
