@@ -112,14 +112,14 @@ class PSO:
     
     def executar(self):
         enxame = self.gerar_enxame()
-        with open ('/home/ismael/Documentos/PYTHON LEARNING PROJECTS/PYTHON_MACHINE_LEARNING/knn/PSO_RESKNN.txt', 'w') as file:
+        with open ('/PSO_RESKNN.txt', 'w') as file:
             for i in range(self.tam_enxame):
                 p = enxame[i]
                 file.write(str(p) + '\n')
             file.write("\n\n")
             
         print("\n\n")
-        with open ('/home/ismael/Documentos/PYTHON LEARNING PROJECTS/PYTHON_MACHINE_LEARNING/knn/PSO_RESKNN.txt', 'a') as file:
+        with open ('PSO_RESKNN.txt', 'a') as file:
             for _ in range(self.num_interacao):
                 for i in range(self.tam_enxame):
                     p = enxame[i]
@@ -131,5 +131,5 @@ class PSO:
         
 if __name__ == '__main__':
 
-    pso = PSO(10,10,"/home/ismael/Documentos/PYTHON LEARNING PROJECTS/PYTHON_MACHINE_LEARNING/knn/diabetes.csv")
+    pso = PSO(10,10,"diabetes.csv")
     pso.executar()
