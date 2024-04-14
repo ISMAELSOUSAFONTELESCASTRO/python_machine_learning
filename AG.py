@@ -89,59 +89,58 @@ class Algoritimo_genetico:
             populacao_mutada.append(nova_populacao[i])
         return populacao_mutada
 
-
-
-    def fitness_populacao(self, populacao):
-        soma = 0
-        for i in range(self.num_ind):
-            soma += self.fitness(populacao[i])
-        return soma/self.num_ind
+    
+    
     def finalizar(self):
+        with open("/home/ismael/Documentos/PYTHON LEARNING PROJECTS/PYTHON_MACHINE_LEARNING/algoritmo genetico/evolucao.txt","w") as file:
 
-
-        #geracao1
-        algoritimo = ""
-        geracao = 1
-        geracao_melhor_ind = 1
-        geracao_melhor = 1
-        pop = self.gerar_pop()
-        nova_pop = self.gerar_nova(pop)
-        pop_mutada = self.mutar(nova_pop)
-        fitness_pop = self.fitness_populacao(pop_mutada)
-
-        for j in range(10):
-            algoritimo += str(pop_mutada[j]) + '\n'
-        self.melhor_ind = pop_mutada[0]
-        for i in range(self.num_ind):
-            if self.fitness(self.melhor_ind) < self.fitness(pop_mutada[i]):
-                self.melhor_ind = pop_mutada[i]
-
-
-        algoritimo += "\nmelhor geracao: " + str(geracao_melhor) + '\n' + str(fitness_pop) + '\n' + "melhor ind: " + '\n' + str(self.melhor_ind) + '\n' +  "geracao: " + str(geracao_melhor_ind) + '\n' + str(self.fitness(self.melhor_ind)) + 2*'\n'
-
-
-        geracao += 1
-        #geracao_seguinte
-        for i in range(self.num_gen - 1):
-            pop = list(pop_mutada)
-            nova_pop = self.gerar_nova(pop)
-            pop_mutada = self.mutar(nova_pop)
-            for k in range(10):
-                algoritimo += str(pop_mutada[k]) + '\n'
-            if fitness_pop < self.fitness_populacao(pop_mutada):
-                fitness_pop = self.fitness_populacao(pop_mutada)
-                geracao_melhor = geracao
+            #geracao1
+            geracao = 1
+            geracao_melhor_ind = 1
+            pop = self.gerar_pop()
+            
+            pop_mutada = pop
+            fit = []
+            for j in range(self.num_ind):
+                fit.append(self.fitness(pop_mutada[j]))
+                file.write(str(pop_mutada[j]) + " " + str(fit[j]) + '\n')
+            self.melhor_ind = pop_mutada[0]
+            self.melhor_fit = fit[0]
 
             for i in range(self.num_ind):
-                if self.fitness(self.melhor_ind) < self.fitness(pop_mutada[i]):
+                if self.melhor_fit < fit[i]:
                     self.melhor_ind = pop_mutada[i]
-                    geracao_melhor_ind = geracao
-            algoritimo += "\nfit atual: " + str(self.fitness_populacao(pop_mutada))
-            algoritimo += "\nmelhor geracao: " + str(geracao_melhor) + '\n' + str(fitness_pop) + '\n' + "melhor ind: " + '\n' + str(self.melhor_ind) + '\n' +  "geracao: " + str(geracao_melhor_ind) + '\n' + str(self.fitness(self.melhor_ind)) + 2*'\n'
+                    self.melhor_fit = fit[i]
 
+            file.write("\n" + "MELHOR INDIVIDUO:  "+ str(self.melhor_ind) + '\n')
+            file.write("SUA GERAÇÃO:  " + str(geracao_melhor_ind) + '\n')
+            file.write("SEU FITNESS:  " + str(self.melhor_fit) + '\n')
+            file.write("FITNESS MEDIO:" + str(sum(fit)/10) + '\n')
             geracao += 1
+            file.write("\n")
+            file.write("\n")
 
-        return algoritimo
+            #geracao_seguinte
+            for i in range(self.num_gen - 1):
+                pop = list(pop_mutada)
+                nova_pop = self.gerar_nova(pop)
+                pop_mutada = self.mutar(nova_pop)
+                fit = []
+                for j in range(self.num_ind):
+                    fit.append(self.fitness(pop_mutada[j]))
+                    file.write(str(pop_mutada[j]) + " " + str(fit[j]) + '\n')
+
+                for i in range(self.num_ind):
+                    if self.melhor_fit < fit[i]:
+                        self.melhor_ind = pop_mutada[i]
+                        self.melhor_fit = fit[i]
+                        geracao_melhor_ind = geracao
+                file.write("\n" + "MELHOR INDIVIDUO:  "+ str(self.melhor_ind) + '\n')
+                file.write("SUA GERAÇÃO:  " + str(geracao_melhor_ind) + '\n')
+                file.write("SEU FITNESS:  " + str(self.melhor_fit) + '\n')
+                file.write("FITNESS MEDIO:" + str(sum(fit)/10) + '\n')
+                geracao += 1
+                file.write("\n")
 
 
 
@@ -152,5 +151,4 @@ class Algoritimo_genetico:
 if __name__ == '__main__':
         
     ag = Algoritimo_genetico(10, 10, 10)
-    with open("/home/ismael/Documentos/PYTHON LEARNING PROJECTS/PYTHON_MACHINE_LEARNING/algoritmo genetico/evolucao.txt","w") as file:
-        file.write(ag.finalizar())
+    ag.finalizar()
