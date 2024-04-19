@@ -1,18 +1,29 @@
-from random import randint, choice
+from random import randint, choice, uniform
+import pandas as pd
+from sklearn import svm
+from sklearn.model_selection import train_test_split as tt
+from sklearn import metrics
+import time
 
 class Algoritimo_genetico:
-    def __init__(self,num_ind, num_gen, chance_m):
+    def __init__(self,num_ind, num_gen, chance_m,arquivo_csv):
         self.num_ind = num_ind
         self.num_gen = num_gen
         self.chance_m = chance_m
+        self.arquivo_csv = arquivo_csv
+        self.dados = pd.read_csv(str(self.arquivo_csv))
+        #"Pregnancies","Glucose","BloodPressure","SkinThickness","Insulin","BMI","DiabetesPedigreeFunction","Age","Outcome"
+        #"age","sex","chest pain type","resting bp s","cholesterol","fasting blood sugar","resting ecg","max heart rate","exercise angina","oldpeak","ST slope","target"
+        self.coluna = ["Pregnancies","Glucose","BloodPressure","SkinThickness","Insulin","BMI","DiabetesPedigreeFunction","Age","Outcome"]
         self.melhor_ind = None
-        self.atributo = [5,10,15,20,25]
+        self.melhor_fit = 0
+
 
     def gerar_ind(self):
-        individuo = []
-        for i in range(len(self.atributo)):
-            individuo.append(randint(1,self.atributo[i]))
-        return individuo
+        Cc = uniform(0.1,100)
+        kernel = randint(0,3)
+        
+        return list([Cc, kernel])
     
     def gerar_pop(self):
         populacao = []
@@ -21,12 +32,18 @@ class Algoritimo_genetico:
         return populacao
     
     def fitness(self, individuo):
-        soma = 0
-        maior = 0
-        for i in range(len(self.atributo)):
-            soma += individuo[i]
-            maior += self.atributo[i]
-        return soma/maior
+        X = self.dados[self.coluna]
+        y = self.dados.Outcome
+        X_treino, X_teste, y_treino, y_teste = tt(X, y, test_size=0.3, random_state=42)
+        kernel = {0: 'linear', 1: 'poly', 2: 'rbf', 3: 'sigmoid'}
+        shape = {0: 'ovo', 1: 'ovr'}
+        if individuo[1]== 0:
+            clf = svm.LinearSVC(C = float(individuo[0]),max_iter= 10000,dual=False, random_state= 42)
+        else:
+            clf = svm.SVC(C = float(individuo[0]), kernel= kernel[int(individuo[1])], decision_function_shape= shape[int(1)], random_state= 42)
+        clf.fit(X_treino, y_treino)
+        previsao = clf.predict(X_teste)
+        return metrics.accuracy_score(y_teste,previsao)
     
     def selecao(self, populacao):
         selecaoH = [choice(populacao), choice(populacao)]
@@ -47,7 +64,7 @@ class Algoritimo_genetico:
         return pai, mae
     
     def crossover(self, selecao):
-        sorteio = randint(0,3)
+        sorteio = 0
         filho1 = []
         filho2 = []
         if sorteio != 0:
@@ -58,13 +75,13 @@ class Algoritimo_genetico:
             filho1.append(selecao[0][0])
             filho2.append(selecao[1][0])
 
-        if sorteio != 3:
+        if sorteio != 1:
             for i in range(sorteio + 1 ,len(selecao[0])):
                 filho1.append(selecao[0][i])
                 filho2.append(selecao[1][i])
         else:
-            filho2.append(selecao[0][4])
-            filho1.append(selecao[1][4])
+            filho2.append(selecao[0][1])
+            filho1.append(selecao[1][1])
 
         return list(filho1), list(filho2)
 
@@ -78,25 +95,29 @@ class Algoritimo_genetico:
         return nova_populacao
 
     def mutar(self, nova_populacao):
+        pop_mutada= []
         chance = 0
-        a = list(nova_populacao)
-        populacao_mutada = []
-        for i in range(len(nova_populacao)):
-            for j in range(len(self.atributo)):
-                chance = randint(1,100)
-                if chance <= self.chance_m:
-                    nova_populacao[i][j] = randint(1, self.atributo[j])
-            populacao_mutada.append(nova_populacao[i])
-        return populacao_mutada
+        for p in nova_populacao:
+            chance = randint(1,100)
+            if chance <= 10:
+                p[0] = uniform(0.1,100)
+            chance = randint(1,100)
+            if chance <= 10:
+                p[1] = randint(0,3)
+            pop_mutada.append(p)
+        return pop_mutada
+            
 
-    
-    
+
+
+
     def finalizar(self):
-        with open("/home/ismael/Documentos/PYTHON LEARNING PROJECTS/PYTHON_MACHINE_LEARNING/algoritmo genetico/evolucao.txt","w") as file:
+        with open("evolucaosvm.txt","w") as file:
 
             #geracao1
             geracao = 1
             geracao_melhor_ind = 1
+            inicio = time.time()
             pop = self.gerar_pop()
             
             pop_mutada = pop
@@ -141,7 +162,9 @@ class Algoritimo_genetico:
                 file.write("FITNESS MEDIO:" + str(sum(fit)/10) + '\n')
                 geracao += 1
                 file.write("\n")
-
+            fim = time.time()
+            print('\n')
+            print(fim - inicio)
 
 
 
@@ -150,5 +173,5 @@ class Algoritimo_genetico:
 
 if __name__ == '__main__':
         
-    ag = Algoritimo_genetico(10, 10, 10)
+    ag = Algoritimo_genetico(10, 10, 10, "diabetes.csv")
     ag.finalizar()
