@@ -19,7 +19,7 @@ class Algoritimo_genetico:
 
 
     def gerar_ind(self):
-        Cc = uniform(0.00001,100)
+        Cc = uniform(0.01,10)
         kernel = randint(0,3)
         
         return list([Cc, kernel])
@@ -33,13 +33,13 @@ class Algoritimo_genetico:
     def fitness(self, individuo):
         X = self.dados[self.coluna]
         y = self.dados.Outcome
-        X_treino, X_teste, y_treino, y_teste = tt(X, y, test_size=0.3, random_state=42)
+        X_treino, X_teste, y_treino, y_teste = tt(X, y, test_size=0.5, random_state=42)
         kernel = {0: 'linear', 1: 'poly', 2: 'rbf', 3: 'sigmoid'}
-        shape = {0: 'ovo', 1: 'ovr'}
+        
         if individuo[1]== 0:
-            clf = svm.LinearSVC(C = float(individuo[0]),max_iter= 10000,dual= True, random_state= 42)
+            clf = svm.LinearSVC(C = float(individuo[0]),dual= False, random_state= 42)
         else:
-            clf = svm.SVC(C = float(individuo[0]), kernel= kernel[int(individuo[1])], decision_function_shape= shape[int(1)], random_state= 42)
+            clf = svm.SVC(C = float(individuo[0]), kernel= kernel[int(individuo[1])], decision_function_shape= 'ovr', random_state= 42)
         clf.fit(X_treino, y_treino)
         previsao = clf.predict(X_teste)
         return metrics.accuracy_score(y_teste,previsao)
@@ -99,7 +99,7 @@ class Algoritimo_genetico:
         for p in nova_populacao:
             chance = randint(1,100)
             if chance <= 10:
-                p[0] = uniform(0.00001,100)
+                p[0] = uniform(0.01,10)
             chance = randint(1,100)
             if chance <= 10:
                 p[1] = randint(0,3)
@@ -111,7 +111,7 @@ class Algoritimo_genetico:
 
 
     def finalizar(self):
-        with open("/home/ismael/Documentos/PYTHON LEARNING PROJECTS/PYTHON_MACHINE_LEARNING/SVM/evolucaosvm.txt","w") as file:
+        with open("evolucaosvm.txt","w") as file:
 
             #geracao1
             geracao = 1

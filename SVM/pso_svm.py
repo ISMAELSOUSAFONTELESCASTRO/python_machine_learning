@@ -47,8 +47,8 @@ class PSO:
         self.num_interacao = int(num_interacao)
         self.melhor_pos_geral = None
         self.melhor_per_geral = 0
-        self.parametro_max = np.array([99.9999,3])
-        self. paramentro_min = np.array([0.00001,0])
+        self.parametro_max = np.array([9.99,3])
+        self. paramentro_min = np.array([0.01,0])
         self.arquivo_csv = arquivo_csv
         self.dados = pd.read_csv(str(self.arquivo_csv))
         self.coluna = ['Pregnancies','Glucose','BloodPressure','SkinThickness','Insulin','BMI','DiabetesPedigreeFunction','Age']
@@ -59,16 +59,16 @@ class PSO:
         return zero
 
     def gerar_pos_rand(self):
-        return np.array([uniform(0.00001,100), randint(0,3)])
+        return np.array([uniform(0.01,10), randint(0,3)])
 
     def performace(self, pos):
         X = self.dados[self.coluna]
         y = self.dados.Outcome
         X_treino, X_teste, y_treino, y_teste = tt(X, y, test_size=0.3, random_state=42)
-        kernel = {0: 'linear', 1: 'poly', 2: 'rbf', 3: 'sigmoid', 4: 'precomputed'}
+        kernel = {0: 'linear', 1: 'poly', 2: 'rbf', 3: 'sigmoid'}
         shape = {0: 'ovo', 1: 'ovr'}
         if pos[1]== 0:
-            clf = svm.LinearSVC(C = float(pos[0]),max_iter= 10000,dual= True, random_state= 42)
+            clf = svm.LinearSVC(C = float(pos[0]),dual= False, random_state= 42)
         else:
             clf = svm.SVC(C = float(pos[0]), kernel= kernel[int(pos[1])], decision_function_shape= shape[int(1)], random_state= 42)
         clf.fit(X_treino, y_treino)
@@ -117,14 +117,14 @@ class PSO:
     def executar(self):
         inicio = time.time()
         enxame = self.gerar_enxame()
-        with open ('/home/ismael/Documentos/PYTHON LEARNING PROJECTS/PYTHON_MACHINE_LEARNING/SVM/PSO_RESsvm.txt', 'w') as file:
+        with open ('PSO_RESsvm.txt', 'w') as file:
             for i in range(self.tam_enxame):
                 p = enxame[i]
                 file.write(str(p) + '\n')
             file.write("\n\n")
             
         
-        with open ('/home/ismael/Documentos/PYTHON LEARNING PROJECTS/PYTHON_MACHINE_LEARNING/SVM/PSO_RESsvm.txt', 'a') as file:
+        with open ('PSO_RESsvm.txt', 'a') as file:
             for _ in range(self.num_interacao):
                 for i in range(self.tam_enxame):
                     p = enxame[i]
