@@ -1,4 +1,3 @@
-import numpy
 from random import randint
 class Formiga:
     def __init__(self):
@@ -65,7 +64,4 @@ class ACO:
     
     
     if __name__ == '__main__':
-
-        aco = ACO(100)
-
-    
+        pass
