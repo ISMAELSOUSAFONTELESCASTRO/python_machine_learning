@@ -1,4 +1,4 @@
-from random import randint, choice
+from random import randint, uniform
 class Formiga:
     def __init__(self):
         self.node = None
@@ -33,6 +33,7 @@ class ACO:
         self.soma_p = 0
         self.ninho = []
         self.melhor_caminho = None
+        self.pesos = []
     
     def gerarNinho(self):
         self.ninho = [ Formiga for _ in range(self.tamanho_ninho)]
@@ -51,14 +52,10 @@ class ACO:
             b = randint(0,2)
             T = caminho.T
             N = caminho.N
-            self.soma_p = self.soma_p + pow(T, a)*pow(N, b)
-    
-    def peso(self,caminho):
-        a = randint(0,2)
-        b = randint(0,2)
-        T = caminho.T
-        N = caminho.N
-        caminho.peso = (pow(T, a)*pow(N, b))
+            x = pow(T, a)*pow(N, b)
+            caminho.peso = x
+            self.pesos.append(x)
+            self.soma_p = self.soma_p + x
     
     
 if __name__ == '__main__':
@@ -66,19 +63,32 @@ if __name__ == '__main__':
     #inicializando atributos:
     aco.gerarNinho()
     aco.gerarTrilha()
-    #aco.gerarDenominador()
+    for i in aco.trilha:
+        i.N = aco.fitness(i.fim)/10
+    aco.gerarDenominador()
+    print(aco.soma_p)
+    print("\n\n")
+
+    dado = uniform(0, aco.soma_p)
+    #print(dado)
+
     pesos = []
+    for caminho in aco.trilha:
+        pesos.append(caminho.peso)
+        #print(caminho.peso)
+    
+    pesos_nivelados = []
+    pesos_nivelados.append(pesos[0])
+    
+    for i in range(1,len(pesos)):
+        pesos_nivelados.append(pesos[i] + pesos_nivelados[i - 1])
+        print(pesos_nivelados[i])
+    
 
     
-    for caminho in aco.trilha:
-        caminho.N = aco.fitness(caminho.fim)
-        aco.peso(caminho)
-        pesos.append(caminho.peso)
 
-    for i in pesos:
-        print(i)
-
-    '''
+'''
+    
     #primeira exploração
     for formiga in aco.ninho:
         caminho = choice(aco.trilha)
