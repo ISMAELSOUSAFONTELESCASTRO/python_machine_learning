@@ -38,10 +38,11 @@ class ACO:
         self.ninho = [ Formiga for _ in range(self.tamanho_ninho)]
     
     def gerarTrilha(self):
-        self.trilha = [Caminho(0,i/10) for i in range(-500, 501)]
+        for i in range(-500, 501):
+            self.trilha.append(Caminho(0,i/10))
 
         
-    def fitness(x):
+    def fitness(self, x):
         return -pow(x,2) + 10*x + 100
     
     def gerarDenominador(self):
@@ -63,19 +64,19 @@ class ACO:
 if __name__ == '__main__':
     aco = ACO(100)
     #inicializando atributos:
-    #aco.gerarNinho
-    aco.gerarTrilha
-    #aco.gerarDenominador
+    aco.gerarNinho()
+    aco.gerarTrilha()
+    #aco.gerarDenominador()
     pesos = []
 
-    '''
+    
     for caminho in aco.trilha:
         caminho.N = aco.fitness(caminho.fim)
         aco.peso(caminho)
-        pesos.append(caminho.peso*[caminho])
-'''
-    for i in range(len(aco.trilha)):
-        print(aco.trilha[i].fim)
+        pesos.append(caminho.peso)
+
+    for i in pesos:
+        print(i)
 
     '''
     #primeira exploração
