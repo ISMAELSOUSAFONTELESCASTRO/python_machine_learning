@@ -6,16 +6,17 @@ class Formiga:
     def proximoNo(self,caminho):
         self.node = caminho
 
-    def deixarFeromonio(self,Caminho):
-        Caminho.T = Caminho.T + 10 
+    def deixarFeromonio(self,caminho):
+        caminho.T = caminho.T + 20 
 
 
 class Caminho:
     def __init__(self, inicio, fim):
         self.inicio = inicio
         self.fim = fim
-        self.T = 10
-        self.N = 1
+        self.T = 20
+        self.N = None
+        self.peso = None
  
 
     def evaporar(self):
@@ -28,25 +29,20 @@ class Caminho:
 class ACO:
     def __init__(self,tamanho_ninho):
         self.tamanho_ninho = tamanho_ninho
-        self.trilha = None
+        self.trilha = []
         self.soma_p = 0
-        self.ninho = None
+        self.ninho = []
         self.melhor_caminho = None
     
     def gerarNinho(self):
         self.ninho = [ Formiga for _ in range(self.tamanho_ninho)]
     
     def gerarTrilha(self):
-        trilha = []
-        for i in range(-5000, 5001):
-            trilha.append(Caminho(0,i/100))
-        self.trilha = trilha
+        self.trilha = [Caminho(0,i/10) for i in range(-500, 501)]
 
         
-        
-
     def fitness(x):
-        return pow(x,2) - 100
+        return -pow(x,2) + 10*x + 100
     
     def gerarDenominador(self):
         for caminho in self.trilha:
@@ -56,24 +52,37 @@ class ACO:
             N = caminho.N
             self.soma_p = self.soma_p + pow(T, a)*pow(N, b)
     
-    def probalidade(self,caminho):
+    def peso(self,caminho):
         a = randint(0,2)
         b = randint(0,2)
         T = caminho.T
         N = caminho.N
-        return (pow(T, a)*pow(N, b))/(self.soma_p)
+        caminho.peso = (pow(T, a)*pow(N, b))
     
     
 if __name__ == '__main__':
     aco = ACO(100)
     #inicializando atributos:
-    aco.gerarNinho
+    #aco.gerarNinho
     aco.gerarTrilha
-    aco.gerarDenominador
+    #aco.gerarDenominador
+    pesos = []
 
+    '''
+    for caminho in aco.trilha:
+        caminho.N = aco.fitness(caminho.fim)
+        aco.peso(caminho)
+        pesos.append(caminho.peso*[caminho])
+'''
+    for i in range(len(aco.trilha)):
+        print(aco.trilha[i].fim)
+
+    '''
     #primeira exploração
     for formiga in aco.ninho:
         caminho = choice(aco.trilha)
         formiga.proximoNo(caminho)
         formiga.deixarFeromonio(caminho)
+'''
+    
     
