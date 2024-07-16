@@ -176,6 +176,6 @@ class Algoritimo_genetico:
 
 if __name__ == '__main__':
         
-    ag = Algoritimo_genetico(10, 10, 10, "/home/ismael/Documentos/PYTHON LEARNING PROJECTS/PYTHON_MACHINE_LEARNING/knn/diabetes.csv")
+    ag = Algoritimo_genetico(10, 10, 10, "/PYTHON_MACHINE_LEARNING/knn/diabetes.csv")
     ag.finalizar()
     
